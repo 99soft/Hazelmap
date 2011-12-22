@@ -1,4 +1,4 @@
-package org.nnsoft.hazelmap;
+package org.nnsoft.hazelmap.concurrent;
 
 /*
  *    Copyright 2011 The 99 Software Foundation
@@ -18,7 +18,9 @@ package org.nnsoft.hazelmap;
 
 import java.io.Serializable;
 
-final class MapperRunnable<K extends Serializable, V extends Serializable>
+import org.nnsoft.hazelmap.Mapper;
+
+public final class MapperRunnable<K extends Serializable, V extends Serializable>
     implements Runnable, Serializable
 {
 

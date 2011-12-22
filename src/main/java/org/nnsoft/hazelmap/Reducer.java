@@ -65,6 +65,6 @@ public abstract class Reducer<K extends Serializable, V extends Serializable>
      * @param key
      * @param values
      */
-    abstract void reduce( K key, Iterable<V> values );
+    abstract public void reduce( K key, Iterable<V> values );
 
 }

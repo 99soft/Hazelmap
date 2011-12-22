@@ -1,4 +1,4 @@
-package org.nnsoft.hazelmap;
+package org.nnsoft.hazelmap.concurrent;
 
 /*
  *    Copyright 2011 The 99 Software Foundation
@@ -19,7 +19,9 @@ package org.nnsoft.hazelmap;
 import java.io.Serializable;
 import java.util.Collection;
 
-final class ReducerRunnable<K extends Serializable, V extends Serializable>
+import org.nnsoft.hazelmap.Reducer;
+
+public final class ReducerRunnable<K extends Serializable, V extends Serializable>
     implements Runnable, Serializable
 {
 

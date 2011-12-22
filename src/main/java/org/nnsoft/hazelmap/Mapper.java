@@ -67,6 +67,6 @@ public abstract class Mapper<IK extends Serializable, IV extends Serializable, O
      * @param inputKey
      * @param inputValue
      */
-    abstract void map( IK inputKey, IV inputValue );
+    abstract public void map( IK inputKey, IV inputValue );
 
 }
