@@ -16,12 +16,9 @@ package org.nnsoft.hazelmap;
  *    limitations under the License.
  */
 
-package org.nnsoft.hazelmap;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.nnsoft.hazelmap.Hazelmap.processInput;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertNotNull;
 
 import org.junit.Test;
 
