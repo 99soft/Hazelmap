@@ -18,7 +18,11 @@ package org.nnsoft.hazelmap;
 
 import java.io.Serializable;
 
+import org.nnsoft.hazelmap.builder.MapReduceInvoker;
 import org.nnsoft.hazelmap.builder.MapperBuilder;
+import org.nnsoft.hazelmap.builder.ReducerBuilder;
+
+import com.hazelcast.core.MultiMap;
 
 public final class Hazelmap
 {
@@ -30,7 +34,7 @@ public final class Hazelmap
             throw new IllegalArgumentException( "The inputReader cannot be null" );
         }
 
-        return null;
+        return new DefaultMapperBuilder<K, V>( inputReader );
     }
 
     /**
@@ -39,6 +43,51 @@ public final class Hazelmap
     private Hazelmap()
     {
         // do nothing
+    }
+
+    private static final class DefaultMapperBuilder<IK extends Serializable, IV extends Serializable>
+        implements MapperBuilder<IK, IV>
+    {
+
+        private final InputReader<IK, IV> inputReader;
+
+        DefaultMapperBuilder( InputReader<IK, IV> inputReader )
+        {
+            this.inputReader = inputReader;
+        }
+
+        public <OK extends Serializable, OV extends Serializable> ReducerBuilder<IK, IV, OK, OV> usingMapper( Mapper<IK, IV, OK, OV> mapper )
+        {
+            return new DefaultReducerBuilder<IK, IV, OK, OV>();
+        }
+
+    }
+
+    private static final class DefaultReducerBuilder<IK extends Serializable, IV extends Serializable, OK extends Serializable, OV extends Serializable>
+        implements ReducerBuilder<IK, IV, OK, OV>
+    {
+
+        public MapReduceInvoker<IK, IV, OK, OV> withReducer( Reducer<OK, OV> reducer )
+        {
+            return new DefaultMapReduceInvoker<IK, IV, OK, OV>();
+        }
+
+    }
+
+    private static final class DefaultMapReduceInvoker<IK extends Serializable, IV extends Serializable, OK extends Serializable, OV extends Serializable>
+        implements MapReduceInvoker<IK, IV, OK, OV>
+    {
+
+        public MultiMap<OK, OV> invoke()
+        {
+            return null;
+        }
+
+        public <O> O invoke( OutputWriter<OK, OV, O> outputWriter )
+        {
+            return null;
+        }
+
     }
 
 }
