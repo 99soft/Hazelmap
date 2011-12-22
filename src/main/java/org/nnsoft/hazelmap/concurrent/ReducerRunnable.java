@@ -30,9 +30,9 @@ public final class ReducerRunnable<K extends Serializable, V extends Serializabl
      */
     private static final long serialVersionUID = 1103886616850434641L;
 
-    public static <K extends Serializable, V extends Serializable> ReducerRunnable<K, V> runnableReducer( K key,
-                                                                                                   Collection<V> values,
-                                                                                                   Reducer<K, V> reducer )
+    public static <K extends Serializable, V extends Serializable> ReducerRunnable<K, V> toRunnable( K key,
+                                                                                                     Collection<V> values,
+                                                                                                     Reducer<K, V> reducer )
     {
         return new ReducerRunnable<K, V>( key, values, reducer );
     }

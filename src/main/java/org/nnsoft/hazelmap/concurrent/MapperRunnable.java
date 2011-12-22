@@ -29,8 +29,8 @@ public final class MapperRunnable<K extends Serializable, V extends Serializable
      */
     private static final long serialVersionUID = -3104075452456356524L;
 
-    public static <K extends Serializable, V extends Serializable> MapperRunnable<K, V> runnableMapper( K key, V value,
-                                                                                                        Mapper<K, V, ? extends Serializable, ? extends Serializable> mapper )
+    public static <K extends Serializable, V extends Serializable> MapperRunnable<K, V> toRunnable( K key, V value,
+                                                                                                    Mapper<K, V, ? extends Serializable, ? extends Serializable> mapper )
     {
         return new MapperRunnable<K, V>( key, value, mapper );
     }
