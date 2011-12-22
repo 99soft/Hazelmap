@@ -6,7 +6,6 @@
  */
 package org.nnsoft.hazelmap;
 
-
 /*
  *    Copyright 2011 The 99 Software Foundation
  *
