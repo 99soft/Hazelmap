@@ -16,6 +16,9 @@ package org.nnsoft.hazelmap;
  *    limitations under the License.
  */
 
+import static com.hazelcast.core.Hazelcast.getMultiMap;
+import static java.util.UUID.randomUUID;
+
 import java.io.Serializable;
 
 import org.nnsoft.hazelmap.builder.MapReduceInvoker;
@@ -58,6 +61,13 @@ public final class Hazelmap
 
         public <OK extends Serializable, OV extends Serializable> ReducerBuilder<IK, IV, OK, OV> usingMapper( Mapper<IK, IV, OK, OV> mapper )
         {
+            if ( mapper == null )
+            {
+                throw new IllegalArgumentException( "The Mapper instance cannot be null" );
+            }
+
+            final MultiMap<OK, OV> intermediate = getMultiMap( randomUUID() + "-intermediate" );
+
             return new DefaultReducerBuilder<IK, IV, OK, OV>();
         }
 
@@ -69,6 +79,11 @@ public final class Hazelmap
 
         public MapReduceInvoker<IK, IV, OK, OV> withReducer( Reducer<OK, OV> reducer )
         {
+            if ( reducer == null )
+            {
+                throw new IllegalArgumentException( "The Reducer instance cannot be null" );
+            }
+
             return new DefaultMapReduceInvoker<IK, IV, OK, OV>();
         }
 
@@ -80,11 +95,17 @@ public final class Hazelmap
 
         public MultiMap<OK, OV> invoke()
         {
-            return null;
+            MultiMap<OK, OV> reduced = getMultiMap( randomUUID() + "-reduced" );
+            return invoke( new MapOutputWriter<OK, OV>( reduced ) );
         }
 
         public <O> O invoke( OutputWriter<OK, OV, O> outputWriter )
         {
+            if ( outputWriter == null )
+            {
+                throw new IllegalArgumentException( "The OutputWriter instance cannot be null" );
+            }
+
             return null;
         }
 
