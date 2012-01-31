@@ -4,7 +4,7 @@
 package org.nnsoft.hazelmap.concurrent;
 
 /*
- *    Copyright 2011 The 99 Software Foundation
+ *    Copyright 2011 - 2012 The 99 Software Foundation
  *
  *    Licensed under the Apache License, Version 2.0 (the "License");
  *    you may not use this file except in compliance with the License.
