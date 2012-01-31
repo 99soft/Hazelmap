@@ -28,6 +28,10 @@ import org.nnsoft.hazelmap.builder.ReducerBuilder;
 
 import com.hazelcast.core.MultiMap;
 
+/**
+ * Hazelmap is a simple implementation of the Map/Reduce algorithm,
+ * built on top of <a href="http://www.hazelcast.com/">Hazelcast</a>.
+ */
 public final class Hazelmap
 {
 
