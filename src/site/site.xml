@@ -16,6 +16,16 @@
 -->
 <project name="${project.name}">
 
+  <custom>
+    <fluidoSkin>
+      <gitHub>
+        <projectId>99soft/Hazelcast</projectId>
+        <ribbonOrientation>right</ribbonOrientation>
+        <ribbonColor>red</ribbonColor>
+      </gitHub>
+    </fluidoSkin>
+  </custom>
+
   <body>
     <menu name="${project.name}">
       <item name="Introduction" href="index.html" />
