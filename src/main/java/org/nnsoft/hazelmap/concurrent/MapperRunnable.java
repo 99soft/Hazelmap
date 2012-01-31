@@ -16,13 +16,20 @@ package org.nnsoft.hazelmap.concurrent;
  *    limitations under the License.
  */
 
+import static java.lang.String.format;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 import org.nnsoft.hazelmap.Mapper;
 
 public final class MapperRunnable<K extends Serializable, V extends Serializable>
     implements Runnable, Serializable
 {
+
+    private static final Logger logger = Logger.getLogger( "org.nnsoft.hazelmap.mapper" );
 
     /**
      *
@@ -53,7 +60,24 @@ public final class MapperRunnable<K extends Serializable, V extends Serializable
      */
     public void run()
     {
-        mapper.map( key, value );
+        if ( logger.isLoggable( INFO ) )
+        {
+            logger.info( format( "Map( %s, %s )", key, value ) );
+        }
+
+        try
+        {
+            mapper.map( key, value );
+        }
+        catch ( Throwable t )
+        {
+            if ( logger.isLoggable( SEVERE ) )
+            {
+                logger.log( SEVERE,
+                            format( "Map( %s, %s ) produced the following error: ", key, value ),
+                            t );
+            }
+        }
     }
 
 }

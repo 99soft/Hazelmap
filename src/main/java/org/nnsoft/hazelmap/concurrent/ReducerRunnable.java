@@ -16,14 +16,21 @@ package org.nnsoft.hazelmap.concurrent;
  *    limitations under the License.
  */
 
+import static java.lang.String.format;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
+
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.logging.Logger;
 
 import org.nnsoft.hazelmap.Reducer;
 
 public final class ReducerRunnable<K extends Serializable, V extends Serializable>
     implements Runnable, Serializable
 {
+
+    private static final Logger logger = Logger.getLogger( "org.nnsoft.hazelmap.reducer" );
 
     /**
      *
@@ -55,7 +62,24 @@ public final class ReducerRunnable<K extends Serializable, V extends Serializabl
      */
     public void run()
     {
-        reducer.reduce( key, values );
+        if ( logger.isLoggable( INFO ) )
+        {
+            logger.info( format( "Reduce( %s, list( %s ) )", key, values ) );
+        }
+
+        try
+        {
+            reducer.reduce( key, values );
+        }
+        catch ( Throwable t )
+        {
+            if ( logger.isLoggable( SEVERE ) )
+            {
+                logger.log( SEVERE,
+                            format( "Reduce( %s, list( %s ) ) produced the following error: ", key, values ),
+                            t );
+            }
+        }
     }
 
 }
