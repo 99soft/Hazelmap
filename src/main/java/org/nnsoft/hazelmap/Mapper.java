@@ -16,6 +16,8 @@ package org.nnsoft.hazelmap;
  *    limitations under the License.
  */
 
+import static org.nnsoft.hazelmap.utils.Assertions.checkState;
+
 import java.io.Serializable;
 
 import com.hazelcast.core.MultiMap;
@@ -42,10 +44,7 @@ public abstract class Mapper<IK extends Serializable, IV extends Serializable, O
 
     void setIntermediate( MultiMap<OK, OV> intermediate )
     {
-        if ( this.intermediate != null )
-        {
-            throw new IllegalStateException( "Re-entry not allowed." );
-        }
+        checkState( this.intermediate == null, "Re-entry not allowed." );
 
         this.intermediate = intermediate;
     }

@@ -18,6 +18,7 @@ package org.nnsoft.hazelmap;
 
 import static com.hazelcast.core.Hazelcast.getMultiMap;
 import static java.util.UUID.randomUUID;
+import static org.nnsoft.hazelmap.utils.Assertions.checkNotNull;
 
 import java.io.Serializable;
 
@@ -61,10 +62,7 @@ public final class Hazelmap
 
         public <OK extends Serializable, OV extends Serializable> ReducerBuilder<IK, IV, OK, OV> usingMapper( Mapper<IK, IV, OK, OV> mapper )
         {
-            if ( mapper == null )
-            {
-                throw new IllegalArgumentException( "The Mapper instance cannot be null" );
-            }
+            mapper = checkNotNull( mapper, "The Mapper instance cannot be null" );
 
             final MultiMap<OK, OV> intermediate = getMultiMap( randomUUID() + "-intermediate" );
 
@@ -79,10 +77,7 @@ public final class Hazelmap
 
         public MapReduceInvoker<IK, IV, OK, OV> withReducer( Reducer<OK, OV> reducer )
         {
-            if ( reducer == null )
-            {
-                throw new IllegalArgumentException( "The Reducer instance cannot be null" );
-            }
+            reducer = checkNotNull( reducer, "The Reducer instance cannot be null" );
 
             return new DefaultMapReduceInvoker<IK, IV, OK, OV>();
         }

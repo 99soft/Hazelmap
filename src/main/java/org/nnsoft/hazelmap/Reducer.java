@@ -16,6 +16,8 @@ package org.nnsoft.hazelmap;
  *    limitations under the License.
  */
 
+import static org.nnsoft.hazelmap.utils.Assertions.checkState;
+
 import java.io.Serializable;
 
 /**
@@ -39,10 +41,7 @@ public abstract class Reducer<K extends Serializable, V extends Serializable>
 
     void init( OutputWriter<K, V, ?> outputWriter )
     {
-        if ( this.outputWriter != null )
-        {
-            throw new IllegalStateException( "Re-entry is not allowed" );
-        }
+        checkState( this.outputWriter == null, "Re-entry is not allowed" );
 
         this.outputWriter = outputWriter;
     }
