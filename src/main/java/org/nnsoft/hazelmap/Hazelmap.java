@@ -18,6 +18,7 @@ package org.nnsoft.hazelmap;
 
 import static com.hazelcast.core.Hazelcast.getMultiMap;
 import static java.util.UUID.randomUUID;
+import static org.nnsoft.hazelmap.utils.Assertions.checkArgument;
 import static org.nnsoft.hazelmap.utils.Assertions.checkNotNull;
 
 import java.io.Serializable;
@@ -37,10 +38,7 @@ public final class Hazelmap
 
     public static <K extends Serializable, V extends Serializable> MapperBuilder<K, V> processInput( InputReader<K, V> inputReader )
     {
-        if ( inputReader == null )
-        {
-            throw new IllegalArgumentException( "The inputReader cannot be null" );
-        }
+        checkArgument( inputReader != null, "The inputReader cannot be null" );
 
         return new DefaultMapperBuilder<K, V>( inputReader );
     }
