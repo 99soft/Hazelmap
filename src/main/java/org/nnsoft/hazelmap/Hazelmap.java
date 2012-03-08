@@ -98,10 +98,7 @@ public final class Hazelmap
 
         public <O> O invoke( OutputWriter<OK, OV, O> outputWriter )
         {
-            if ( outputWriter == null )
-            {
-                throw new IllegalArgumentException( "The OutputWriter instance cannot be null" );
-            }
+            outputWriter = checkNotNull( outputWriter, "The OutputWriter instance cannot be null" );
 
             return null;
         }
