@@ -16,9 +16,15 @@ package org.nnsoft.hazelmap;
  *    limitations under the License.
  */
 
+import static com.hazelcast.core.Hazelcast.getCluster;
+import static java.lang.String.format;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
 import static org.nnsoft.hazelmap.utils.Assertions.checkState;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.logging.Logger;
 
 /**
  * The <i>Reduce</i> function is applied in parallel to each <i>Map</> group,
@@ -37,6 +43,9 @@ public abstract class Reducer<K extends Serializable, V extends Serializable>
      */
     private static final long serialVersionUID = -2485928172918908803L;
 
+
+    private static final Logger logger = Logger.getLogger( "org.nnsoft.hazelmap.reducer" );
+
     private OutputWriter<K, V, ?> outputWriter;
 
     void init( OutputWriter<K, V, ?> outputWriter )
@@ -53,6 +62,10 @@ public abstract class Reducer<K extends Serializable, V extends Serializable>
 
     protected final void emit( K key, V value )
     {
+        if ( logger.isLoggable( INFO ) )
+        {
+            logger.info( format( "[%s] emit( %s, %s )", getCluster().getLocalMember(), key, value ) );
+        }
         outputWriter.write( key, value );
     }
 
@@ -65,5 +78,57 @@ public abstract class Reducer<K extends Serializable, V extends Serializable>
      * @param values
      */
     abstract public void reduce( K key, Iterable<V> values );
+
+    final Runnable newRunnable( K key, Collection<V> values )
+    {
+        return new ReducerRunnable<K, V>( key, values, this );
+    }
+
+    private static final class ReducerRunnable<K extends Serializable, V extends Serializable>
+        implements Runnable, Serializable
+    {
+
+        private static final long serialVersionUID = 1103886616850434641L;
+
+        private final K key;
+
+        private final Collection<V> values;
+
+        private final Reducer<K, V> reducer;
+
+        private ReducerRunnable( K key, Collection<V> values, Reducer<K, V> reducer )
+        {
+            this.key = key;
+            this.values = values;
+            this.reducer = reducer;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public void run()
+        {
+            if ( logger.isLoggable( INFO ) )
+            {
+                logger.info( format( "[%s] Reduce( %s, list( %s ) )", getCluster().getLocalMember(), key, values ) );
+            }
+
+            try
+            {
+                reducer.reduce( key, values );
+            }
+            catch ( Throwable t )
+            {
+                if ( logger.isLoggable( SEVERE ) )
+                {
+                    logger.log( SEVERE,
+                                format( "[%s] Reduce( %s, list( %s ) ) produced the following error: %s",
+                                        getCluster().getLocalMember(), key, values, t.getMessage() ),
+                                t );
+                }
+            }
+        }
+
+    }
 
 }

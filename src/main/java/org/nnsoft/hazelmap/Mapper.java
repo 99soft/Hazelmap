@@ -16,9 +16,14 @@ package org.nnsoft.hazelmap;
  *    limitations under the License.
  */
 
+import static com.hazelcast.core.Hazelcast.getCluster;
+import static java.lang.String.format;
+import static java.util.logging.Level.INFO;
+import static java.util.logging.Level.SEVERE;
 import static org.nnsoft.hazelmap.utils.Assertions.checkState;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 import com.hazelcast.core.MultiMap;
 
@@ -36,6 +41,8 @@ public abstract class Mapper<IK extends Serializable, IV extends Serializable, O
 {
 
     private static final long serialVersionUID = 7647677113647110866L;
+
+    private static final Logger logger = Logger.getLogger( "org.nnsoft.hazelmap.mapper" );
 
     /**
      * The intermediate
@@ -56,6 +63,10 @@ public abstract class Mapper<IK extends Serializable, IV extends Serializable, O
 
     protected final void emitIntermediate( OK key, OV value )
     {
+        if ( logger.isLoggable( INFO ) )
+        {
+            logger.info( format( "[%s] emitIntermediate( %s, %s )", getCluster().getLocalMember(), key, value ) );
+        }
         intermediate.put( key, value );
     }
 
@@ -67,5 +78,54 @@ public abstract class Mapper<IK extends Serializable, IV extends Serializable, O
      * @param inputValue
      */
     abstract public void map( IK inputKey, IV inputValue );
+
+    final Runnable newRunnable( IK inputKey, IV inputValue )
+    {
+        return new MapperRunnable<IK, IV, OK, OV>( inputKey, inputValue, this );
+    }
+
+    private static final class MapperRunnable<IK extends Serializable, IV extends Serializable, OK extends Serializable, OV extends Serializable>
+        implements Runnable, Serializable
+    {
+
+        private static final long serialVersionUID = -3104075452456356524L;
+
+        private final IK key;
+
+        private final IV value;
+
+        private final Mapper<IK, IV, OK, OV> mapper;
+
+        public MapperRunnable( IK key, IV value, Mapper<IK, IV, OK, OV> mapper )
+        {
+            this.key = key;
+            this.value = value;
+            this.mapper = mapper;
+        }
+
+        public void run()
+        {
+            if ( logger.isLoggable( INFO ) )
+            {
+                logger.info( format( "[%s] Map( %s, %s )", getCluster().getLocalMember(), key, value ) );
+            }
+
+            try
+            {
+                mapper.map( key, value );
+            }
+            catch ( Throwable t )
+            {
+                if ( logger.isLoggable( SEVERE ) )
+                {
+                    logger.log( SEVERE,
+                                format( "[%s] Map( %s, %s ) produced the following error: %s",
+                                        getCluster().getLocalMember(), key, value, t.getMessage() ),
+                                t );
+                }
+            }
+        }
+
+    }
 
 }
