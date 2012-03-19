@@ -68,7 +68,10 @@ public final class Hazelmap
 
             final MultiMap<OK, OV> intermediate = getMultiMap( randomUUID() + "-intermediate" );
 
-            return new DefaultReducerBuilder<IK, IV, OK, OV>();
+            // inputReader.setMapper( mapper );
+            mapper.setIntermediate( intermediate );
+
+            return new DefaultReducerBuilder<IK, IV, OK, OV>( inputReader );
         }
 
     }
@@ -77,11 +80,18 @@ public final class Hazelmap
         implements ReducerBuilder<IK, IV, OK, OV>
     {
 
+        private final InputReader<IK, IV> inputReader;
+
+        DefaultReducerBuilder( InputReader<IK, IV> inputReader )
+        {
+            this.inputReader = inputReader;
+        }
+
         public MapReduceInvoker<IK, IV, OK, OV> withReducer( Reducer<OK, OV> reducer )
         {
             reducer = checkNotNull( reducer, "The Reducer instance cannot be null" );
 
-            return new DefaultMapReduceInvoker<IK, IV, OK, OV>();
+            return new DefaultMapReduceInvoker<IK, IV, OK, OV>( inputReader, reducer );
         }
 
     }
@@ -89,6 +99,16 @@ public final class Hazelmap
     private static final class DefaultMapReduceInvoker<IK extends Serializable, IV extends Serializable, OK extends Serializable, OV extends Serializable>
         implements MapReduceInvoker<IK, IV, OK, OV>
     {
+
+        private final InputReader<IK, IV> inputReader;
+
+        private final Reducer<OK, OV> reducer;
+
+        DefaultMapReduceInvoker( InputReader<IK, IV> inputReader, Reducer<OK, OV> reducer )
+        {
+            this.inputReader = inputReader;
+            this.reducer = reducer;
+        }
 
         public MultiMap<OK, OV> invoke()
         {
@@ -100,7 +120,11 @@ public final class Hazelmap
         {
             outputWriter = checkNotNull( outputWriter, "The OutputWriter instance cannot be null" );
 
-            return null;
+            reducer.init( outputWriter );
+
+            inputReader.readInput();
+
+            return outputWriter.getResult();
         }
 
     }

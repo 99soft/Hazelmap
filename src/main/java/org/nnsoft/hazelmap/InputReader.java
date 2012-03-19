@@ -25,8 +25,16 @@ import java.io.Serializable;
 public abstract class InputReader<K extends Serializable, V extends Serializable>
 {
 
+    private Mapper<K, V, ?, ?> mapper;
+
+    void setMapper( Mapper<K, V, ?, ?> mapper )
+    {
+        this.mapper = mapper;
+    }
+
     protected final void processInput( K key, V value )
     {
+
     }
 
     public abstract void readInput();
